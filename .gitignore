@@ -1,0 +1,29 @@
+﻿# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# logs
+*.log
+
+# env / secrets
+.env
+*.key
+*.pem
+
+# Java / Maven / Gradle
+target/
+*.class
+.gradle/
+build/
+out/
+
+# Node
+node_modules/
+dist/
+
+# data files (先不要上傳大檔或敏感帳務)
+sql/01_raw/*.csv
+sql/01_raw/*.xlsx
+sql/01_raw/*.xls
