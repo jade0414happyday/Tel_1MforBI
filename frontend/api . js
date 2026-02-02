@@ -1,0 +1,21 @@
+// frontend/api.js
+const API_BASE = "http://127.0.0.1:3001";
+
+async function fetchMissingMonths({ book, bankCode, from, to }) {
+  const qs = new URLSearchParams({
+    book,
+    bank_code: bankCode,
+    from,
+    to,
+  }).toString();
+
+  const url = `${API_BASE}/profile/life-liquidity/missing-months?${qs}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`API error ${res.status}`);
+  return res.json();
+}
+
+// 掛到全域
+window.TEL_API = { fetchMissingMonths };
+
+

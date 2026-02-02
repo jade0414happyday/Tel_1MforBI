@@ -1,0 +1,45 @@
+// frontend/app.js
+(function () {
+  function $(id) {
+    return document.getElementById(id);
+  }
+
+  function renderMissingMonths(data) {
+    const box = $("missingBox");
+    if (!box) return;
+
+    const rows = data?.rows ?? [];
+    if (rows.length === 0) {
+      box.innerHTML = "<div>(no missing months)</div>";
+      return;
+    }
+
+    box.innerHTML =
+      "<ul>" +
+      rows.map(r => `<li>${r.txn_month.slice(0, 7)}</li>`).join("") +
+      "</ul>";
+  }
+
+  async function main() {
+    if (!window.TEL_API) {
+      console.error("TEL_API not found");
+      return;
+    }
+
+    try {
+      const data = await window.TEL_API.fetchMissingMonths({
+        book: "A",
+        bankCode: "SINOPAC",
+        from: "2021-01-01",
+        to: "2022-12-31",
+      });
+      renderMissingMonths(data);
+      console.log("OK", data);
+    } catch (e) {
+      console.error(e);
+      $("missingBox").textContent = String(e);
+    }
+  }
+
+  window.addEventListener("DOMContentLoaded", main);
+})();

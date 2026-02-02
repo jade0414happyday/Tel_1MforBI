@@ -1,29 +1,37 @@
-﻿# OS / editor
-.DS_Store
-Thumbs.db
-.vscode/
-.idea/
-
-# logs
-*.log
-
-# env / secrets
+# secrets
 .env
-*.key
-*.pem
+api/.env
+**/.env
 
-# Java / Maven / Gradle
-target/
-*.class
-.gradle/
-build/
-out/
+# editors
+.vscode/
+.Java/
 
-# Node
+# node
 node_modules/
-dist/
+**/node_modules/
 
-# data files (先不要上傳大檔或敏感帳務)
+# java
+target/
+**/target/
+
+# local generated / inventory
+sql/__run_combined.sql
+sql_inventory.csv
+sql_inventory.txt
+
+# data files (do not upload)
 sql/01_raw/*.csv
 sql/01_raw/*.xlsx
 sql/01_raw/*.xls
+
+# local dev folders / scratch
+query/
+
+# root-only lockfile (keep api/ and frontend/)
+/package-lock.json
+
+# local dev folders / scratch
+query
+
+
