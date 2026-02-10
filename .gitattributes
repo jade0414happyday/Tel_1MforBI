@@ -14,3 +14,5 @@
 # keep git meta files in CRLF (working tree)
 .gitattributes text eol=crlf
 .gitignore    text eol=crlf
+# pin editorconfig in CRLF (working tree)
+.editorconfig text eol=crlf
