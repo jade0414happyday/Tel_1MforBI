@@ -35,3 +35,19 @@ query/
 query
 
 
+# local env
+.env
+api/.env
+
+# deps
+node_modules/
+api/node_modules/
+frontend/node_modules/
+
+# editor + OS
+.vscode/
+.DS_Store
+Thumbs.db
+
+# local backups
+_backup/
