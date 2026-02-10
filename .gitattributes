@@ -6,10 +6,11 @@
 *.bat text eol=crlf
 *.cmd text eol=crlf
 
-# keep source in LF (optional; if you prefer LF in repo)
+# keep source in LF
 *.js  text eol=lf
 *.sql text eol=lf
 *.md  text eol=lf
-# force LF for git meta files
-.gitattributes text eol=lf
-.gitignore    text eol=lf
+
+# keep git meta files in CRLF (working tree)
+.gitattributes text eol=crlf
+.gitignore    text eol=crlf
