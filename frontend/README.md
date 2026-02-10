@@ -1,25 +1,11 @@
-\# TEL Frontend //frontend/index.html
+# TEL Frontend
 
+## Run locally
+在本機用 Python 靜態伺服器開 `frontend/index.html`。
 
-
-
-\## Run locally
-
-\## Verify   //驗收步驟
-
-Open:             //在瀏覽器搜尋
-
-http://127.0.0.1:5173/  //我的電腦:簡易靜態伺服器用的埠號
-
-
-
-Expected:   //看到的畫面特徵
-
-You can see "TEL 專案骨架 OK"
-
-
-
+```bash
 cd frontend
+python -m http.server 5173
 
 
 
