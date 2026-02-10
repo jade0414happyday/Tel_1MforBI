@@ -51,3 +51,7 @@ Thumbs.db
 
 # local backups
 _backup/
+# local probes (do not commit)
+api/db_probe_*.js
+api/db_show_star_sql.js
+api/probe_fact_txn_build.js
