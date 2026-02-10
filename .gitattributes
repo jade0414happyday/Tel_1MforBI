@@ -1,0 +1,12 @@
+﻿# normalize text files
+* text=auto
+
+# keep windows scripts in CRLF
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# keep source in LF (optional; if you prefer LF in repo)
+*.js  text eol=lf
+*.sql text eol=lf
+*.md  text eol=lf
