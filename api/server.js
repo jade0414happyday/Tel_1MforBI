@@ -1,7 +1,7 @@
 ﻿/* eslint-env node */
 
 const path = require("path");
-require("dotenv").config({ path: path.join(__dirname, ".env"), override: true });
+require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const http = require("http");
 const { openConnection } = require("./db");
@@ -103,6 +103,11 @@ function toNumberOrNull(v) {
   if (v == null || v === "") return null;
   const n = Number(v);
   return Number.isFinite(n) ? n : null;
+}
+
+function toYm(v) {
+  if (v == null) return null;
+  return String(v).slice(0, 7);
 }
 
 function badRequestRangeBody(message, raw, normalized) {
@@ -478,25 +483,32 @@ async function profileMissingMonths(rawQ) {
 
     const expectedMonths = monthKeyList(query.from, query.to);
     const presentSet = new Set(presentMonths);
-    const missingMonths = expectedMonths.filter((m) => !presentSet.has(m));
+
+    const missingMonths = expectedMonths
+      .filter((m) => !presentSet.has(m))
+      .map((m) => toYm(m));
 
     return {
       status: 200,
       body: {
         ok: 1,
         version: VERSION,
-        q: query,
-        rows: missingMonths.map((m) => ({ month: m })),
+        route: "/profile/missing-months",
+        query,
+        count: missingMonths.length,
+        months: missingMonths,
+        rows: missingMonths.map((month) => ({ month })),
+        note: missingMonths.length ? "missing months detected" : "no missing months",
+        source: {
+          table: ctx.table,
+          date_col: ctx.dateCol,
+          book_col: ctx.bookCol,
+          bank_col: ctx.bankCol,
+        },
         meta: {
           expected_cnt: expectedMonths.length,
           present_cnt: presentMonths.length,
           missing_cnt: missingMonths.length,
-          source: {
-            table: ctx.table,
-            date_col: ctx.dateCol,
-            book_col: ctx.bookCol,
-            bank_col: ctx.bankCol,
-          },
         },
       },
     };
@@ -737,10 +749,12 @@ async function profileStressMonths(rawQ) {
     const fetched = await fetchMonthlySummaryRows(conn, query);
     if (!fetched.ok) return { status: fetched.status, body: fetched.body };
 
+    const { ctx } = fetched;
+
     const stressRows = fetched.rows
       .filter(isStressMonth)
       .map((row) => ({
-        month: row.month,
+        month: toYm(row.month),
         inflow: toNumberOrNull(row.inflow),
         outflow: toNumberOrNull(row.outflow),
         net: toNumberOrNull(row.net),
@@ -748,6 +762,8 @@ async function profileStressMonths(rawQ) {
         missing_amount_txn_count: toNumberOrNull(row.missing_amount_txn_count),
         stress_reason: stressReason(row),
       }));
+
+    const months = stressRows.map((row) => row.month);
 
     return {
       status: 200,
@@ -757,7 +773,20 @@ async function profileStressMonths(rawQ) {
         route: "/profile/stress-months",
         query,
         count: stressRows.length,
+        months,
         rows: stressRows,
+        note: stressRows.length ? "stress months detected" : "no stress months",
+        source: {
+          table: ctx.table,
+          book_col: ctx.bookCol,
+          bank_col: ctx.bankCol,
+          month_col: ctx.monthCol,
+          inflow_col: ctx.inflowCol,
+          outflow_col: ctx.outflowCol,
+          net_col: ctx.netCol,
+          txn_count_col: ctx.txnCountCol,
+          missing_amount_txn_count_col: ctx.missingAmountTxnCountCol,
+        },
       },
     };
   } finally {
@@ -780,7 +809,11 @@ async function handleRequest(req) {
     return profileTxns(q);
   }
 
-  if (req.method === "GET" && pathname === "/profile/life-liquidity/missing-months") {
+  if (
+    req.method === "GET" &&
+    (pathname === "/profile/missing-months" ||
+      pathname === "/profile/life-liquidity/missing-months")
+  ) {
     return profileMissingMonths(q);
   }
 
